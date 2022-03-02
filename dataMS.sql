@@ -1,55 +1,84 @@
-CREATE TABLE `product`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(255) NOT NULL,
-    `description` TEXT NOT NULL,
-    `price` INT NOT NULL,
-    `stack` INT NOT NULL
+/*==============================================================*/
+/* Nom de SGBD :  MySQL 5.0                                     */
+/* Date de cr�ation :  01/03/2022 12:30:44                      */
+/*==============================================================*/
+
+
+drop table if exists Customers;
+
+drop table if exists OrderDetails;
+
+drop table if exists Orders;
+
+drop table if exists Products;
+
+/*==============================================================*/
+/* Table : Customers                                            */
+/*==============================================================*/
+create table Customers
+(
+   customerCode         int not null,
+   lastName             varchar(100) not null,
+   firstName            varchar(100) not null,
+   adress               varchar(254) not null,
+   phone                varchar(15) not null,
+   email                varchar(254) not null,
+   password             varchar(254) not null,
+   primary key (customerCode)
 );
-ALTER TABLE
-    `product` ADD PRIMARY KEY `product_id_primary`(`id`);
-CREATE TABLE `product_num`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `product_id` INT NOT NULL,
-    `num_product` INT NOT NULL
+
+/*==============================================================*/
+/* Table : OrderDetails                                         */
+/*==============================================================*/
+create table OrderDetails
+(
+   orderID              int not null,
+   productID            int not null,
+   orderedQuantity      int,
+   primary key (orderID, productID)
 );
-ALTER TABLE
-    `product_num` ADD PRIMARY KEY `product_num_id_primary`(`id`);
-CREATE TABLE `order_num`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `coustumer_id` INT NOT NULL,
-    `num_order` INT NOT NULL
+
+/*==============================================================*/
+/* Table : Orders                                               */
+/*==============================================================*/
+create table Orders
+(
+   orderID              int not null,
+   customerCode         int not null,
+   orderDate            datetime,
+   deliveryAddress      varchar(254),
+   primary key (orderID)
 );
-ALTER TABLE
-    `order_num` ADD PRIMARY KEY `order_num_id_primary`(`id`);
-CREATE TABLE `coustumer`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `f_name` VARCHAR(255) NOT NULL,
-    `l_name` VARCHAR(255) NOT NULL,
-    `coustumer_address` VARCHAR(255) NOT NULL,
-    `phone` INT NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `password` VARCHAR(255) NOT NULL
+
+/*==============================================================*/
+/* Table : Products                                             */
+/*==============================================================*/
+create table Products
+(
+   productID            int not null,
+   productName          varchar(254),
+   description          varchar(254),
+   unitPrice            numeric(8,0),
+   quantityInStock      int,
+   image                varchar(254),
+   primary key (productID)
 );
-ALTER TABLE
-    `coustumer` ADD PRIMARY KEY `coustumer_id_primary`(`id`);
-ALTER TABLE
-    `coustumer` ADD INDEX `coustumer_email_index`(`email`);
-ALTER TABLE
-    `coustumer` ADD INDEX `coustumer_password_index`(`password`);
-CREATE TABLE `order`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `product_num_id` INT NOT NULL,
-    `order_num_id` INT NOT NULL,
-    `date` DATE NOT NULL,
-    `address_order` TEXT NOT NULL
-);
-ALTER TABLE
-    `order` ADD PRIMARY KEY `order_id_primary`(`id`);
-ALTER TABLE
-    `order` ADD CONSTRAINT `order_product_num_id_foreign` FOREIGN KEY(`product_num_id`) REFERENCES `product_num`(`id`);
-ALTER TABLE
-    `product_num` ADD CONSTRAINT `product_num_product_id_foreign` FOREIGN KEY(`product_id`) REFERENCES `product`(`id`);
-ALTER TABLE
-    `order` ADD CONSTRAINT `order_order_num_id_foreign` FOREIGN KEY(`order_num_id`) REFERENCES `order_num`(`id`);
-ALTER TABLE
-    `order_num` ADD CONSTRAINT `order_num_coustumer_id_foreign` FOREIGN KEY(`coustumer_id`) REFERENCES `coustumer`(`id`);
+
+alter table OrderDetails add constraint FK_Contient foreign key (orderID)
+      references Orders (orderID) on delete restrict on update restrict;
+
+alter table OrderDetails add constraint FK_commande_dans foreign key (productID)
+      references Products (productID) on delete restrict on update restrict;
+
+alter table Orders add constraint FK_commander foreign key (customerCode)
+      references Customers (customerCode) on delete restrict on update restrict;
+
+
+Delete From OrderDetail;
+
+Delete From Orders;
+
+Delete From Products;
+
+Delete From Customers;
+
